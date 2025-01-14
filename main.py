@@ -6,6 +6,9 @@ class Game:
         WINDOW_WIDTH, WINDOW_HEIGHT = 256, 240
         
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.icon = pygame.image.load("data/run2.png")
+        
+        pygame.display.set_icon(self.icon)
         pygame.display.set_caption("setup")
         
         self.game_loop()
