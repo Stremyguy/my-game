@@ -22,7 +22,7 @@ class Player:
         self.on_ground = False
         
         self.speed = 2
-        self.gravity = 700
+        self.gravity = 600
         self.jump_force = -300
         self.velocity_y = 0
         self.hp = 100
@@ -54,7 +54,29 @@ class Player:
         if self.on_ground:
             self.velocity_y = self.jump_force
             self.on_ground = False
-                    
+    
+    def apply_gravity(self, dt: float) -> None:
+        if not self.on_ground:
+            self.velocity_y += self.gravity * dt
+        else:
+            self.velocity_y = 0
+    
+    def check_collisions(self, block_tiles: list) -> None:
+        self.on_ground = False
+        
+        for tile in block_tiles:
+            if self.rect.colliderect(tile):
+                if self.velocity_y > 0:
+                    if self.rect.bottom <= tile.top and self.rect.bottom + self.velocity_y >= tile.top:
+                        self.rect.bottom = tile.top
+                        self.on_ground = True
+                        break
+                elif self.velocity_y < 0:
+                    if self.rect.top >= tile.bottom and self.rect.top + self.velocity_y <= tile.bottom:
+                        self.rect.top = tile.bottom
+                        self.velocity_y = 0
+                        break
+    
     def get_current_sprite(self) -> str:
         folder = "data/"
         
@@ -82,30 +104,10 @@ class Player:
         self.move_player(speed=self.speed)
         self.update_animation(dt)
         
-        if not self.on_ground:
-            self.velocity_y += self.gravity * dt
-        else:
-            if self.velocity_y >= 0:
-                self.velocity_y = 0
-        
+        self.apply_gravity(dt)
         self.rect.y += self.velocity_y * dt
         
-        self.on_ground = False
-        
-        for tile in block_tiles:
-            if self.rect.colliderect(tile):
-                if self.velocity_y > 0:
-                    if self.rect.bottom <= tile.top and self.rect.bottom + self.velocity_y * dt > tile.top:
-                        self.rect.bottom = tile.top
-                        self.on_ground = True
-                        self.velocity_y = 0
-                        break
-                
-                if self.velocity_y < 0:
-                    if self.rect.top >= tile.bottom and self.rect.top + self.velocity_y * dt > tile.bottom:
-                        self.rect.top = tile.bottom
-                        self.velocity_y = 0
-                        break
+        self.check_collisions(block_tiles)
         
         self.render(screen, camera=camera)
 

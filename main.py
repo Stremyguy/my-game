@@ -60,12 +60,11 @@ class Game:
             
             camera.update(self.player)
             self.level.render(screen=self.screen, camera=camera)
+            
             dt = self.clock.tick(self.fps) / 1000.0
             block_tiles = self.level.get_block_tiles()
             self.player.update(screen=self.screen, camera=camera, dt=dt, block_tiles=block_tiles)
-            
-            print(self.player.on_ground)
-            
+
             self.player_info()
             
             if self.player.check_game_over():
