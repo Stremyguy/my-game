@@ -22,7 +22,7 @@ class Player:
         self.on_ground = False
         
         self.speed = 2
-        self.gravity = 600
+        self.gravity = 700
         self.jump_force = -300
         self.velocity_y = 0
         self.hp = 100
@@ -52,31 +52,21 @@ class Player:
     
     def jump(self) -> None:
         if self.on_ground:
-            self.velocity_y = self.jump_force
+            self.rect.y -= 50
             self.on_ground = False
     
-    def apply_gravity(self, dt: float) -> None:
-        if not self.on_ground:
-            self.velocity_y += self.gravity * dt
-        else:
-            self.velocity_y = 0
-    
-    def check_collisions(self, block_tiles: list) -> None:
+    def gravity_check(self, block_tiles: list) -> None:
         self.on_ground = False
+        
+        self.rect.y += 5
         
         for tile in block_tiles:
             if self.rect.colliderect(tile):
-                if self.velocity_y > 0:
-                    if self.rect.bottom <= tile.top and self.rect.bottom + self.velocity_y >= tile.top:
-                        self.rect.bottom = tile.top
-                        self.on_ground = True
-                        break
-                elif self.velocity_y < 0:
-                    if self.rect.top >= tile.bottom and self.rect.top + self.velocity_y <= tile.bottom:
-                        self.rect.top = tile.bottom
-                        self.velocity_y = 0
-                        break
-    
+                if self.rect.bottom > tile.top and self.rect.bottom - 5 <= tile.top:
+                    self.rect.bottom = tile.top
+                    self.on_ground = True
+                    break
+                    
     def get_current_sprite(self) -> str:
         folder = "data/"
         
@@ -104,10 +94,7 @@ class Player:
         self.move_player(speed=self.speed)
         self.update_animation(dt)
         
-        self.apply_gravity(dt)
-        self.rect.y += self.velocity_y * dt
-        
-        self.check_collisions(block_tiles)
+        self.gravity_check(block_tiles)
         
         self.render(screen, camera=camera)
 
