@@ -1,0 +1,50 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "maps/level_1.tmx",
+    "expandedProjectPaths": [
+        "maps",
+        "."
+    ],
+    "fileStates": {
+        "main tile set.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "maps/level1.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 176.16666666666669,
+                "y": 71
+            }
+        },
+        "maps/level_1.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 796.75,
+                "y": 131.5
+            }
+        }
+    },
+    "last.imagePath": "C:/Users/PC/Desktop/sprites",
+    "map.height": 20,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 12,
+    "map.tileWidth": 12,
+    "map.width": 100,
+    "openFiles": [
+        "main tile set.tsx",
+        "maps/level_1.tmx"
+    ],
+    "project": "level_1.tiled-project",
+    "recentFiles": [
+        "main tile set.tsx",
+        "maps/level_1.tmx",
+        "maps/level1.tmx"
+    ]
+}
