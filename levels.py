@@ -29,6 +29,20 @@ class Level:
     def setup(self) -> None:
         self.player.set_position(self.player_position[0], self.player_position[1])
 
+    def get_block_tiles(self) -> list:
+        block_tiles = []
+        
+        for y in range(self.height):
+            for x in range(self.width):
+                tile_id = self.map.get_tile_gid(x, y, 0)
+
+                if tile_id in self.block_tiles_id:
+                    block_tiles.append(
+                        pygame.Rect(x * self.tile_size, y * self.tile_size, self.tile_size, self.tile_size)
+                    )
+        
+        return block_tiles
+    
     def render(self, screen: "pygame", camera) -> None:
         for y in range(self.height):
             for x in range(self.width):

@@ -22,6 +22,9 @@ class Player:
         self.on_ground = False
         
         self.speed = 2
+        self.gravity = 700
+        self.jump_force = -200
+        self.velocity_y = 0
         self.hp = 100
         self.power_points_collected = 0
     
@@ -49,8 +52,9 @@ class Player:
     
     def jump(self) -> None:
         if self.on_ground:
-            pass
-    
+            self.rect.y -= 50
+            self.on_ground = False
+                    
     def get_current_sprite(self) -> str:
         folder = "data/"
         
@@ -74,9 +78,21 @@ class Player:
         
         screen.blit(current_sprite, rect.topleft)
     
-    def update(self, screen: "pygame", camera, dt: float) -> None:
+    def update(self, screen: "pygame", camera, dt: float, block_tiles: list) -> None:
         self.move_player(speed=self.speed)
         self.update_animation(dt)
+        
+        self.on_ground = False
+        
+        self.rect.y += 5
+        
+        for tile in block_tiles:
+            if self.rect.colliderect(tile):
+                if self.rect.bottom > tile.top and self.rect.bottom - 5 <= tile.top:
+                    self.rect.bottom = tile.top
+                    self.on_ground = True
+                    break
+        
         self.render(screen, camera=camera)
 
 

@@ -49,6 +49,8 @@ class Game:
                         self.player.moving_x = True
                         self.player.set_speed(2)
                         self.player.current_state = "run"
+                    if event.key == pygame.K_SPACE:
+                        self.player.jump()
                         
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -57,11 +59,12 @@ class Game:
                         self.player.current_state = "idle"
             
             camera.update(self.player)
-            
             self.level.render(screen=self.screen, camera=camera)
-            
             dt = self.clock.tick(self.fps) / 1000.0
-            self.player.update(screen=self.screen, camera=camera, dt=dt)
+            block_tiles = self.level.get_block_tiles()
+            self.player.update(screen=self.screen, camera=camera, dt=dt, block_tiles=block_tiles)
+            
+            print(self.player.on_ground)
             
             self.player_info()
             
@@ -94,9 +97,9 @@ class Game:
         self.level = Level(
             level_name="level_1",
             player=self.player,
-            player_position=(17, 180),
+            player_position=(17, 0),
             enemies_data=enemies[1],
-            block_tiles_id=[1, 2]
+            block_tiles_id=[2, 3]
         )
     
     def set_background_music(self, music_fn: str) -> None:
