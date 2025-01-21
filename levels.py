@@ -10,12 +10,14 @@ class Level:
                  player: "Player",
                  player_position: tuple,
                  enemies_data: list,
+                 power_points_data: list,
                  block_tiles_id: list
                  ) -> None:
         self.level_name = level_name
         self.player = player
         self.player_position = player_position
         self.enemies_data = enemies_data
+        self.power_points_data = power_points_data
         self.block_tiles_id = block_tiles_id
         
         self.map = pytmx.load_pygame(f"data/levels/maps/{level_name}.tmx")

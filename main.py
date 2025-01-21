@@ -94,11 +94,14 @@ class Game:
             ]
         }
         
+        power_points = {1: []}
+        
         self.level = Level(
             level_name="level_1",
             player=self.player,
             player_position=(17, 0),
             enemies_data=enemies[1],
+            power_points_data=power_points[1],
             block_tiles_id=[2, 3]
         )
     

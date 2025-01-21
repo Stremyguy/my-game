@@ -85,7 +85,8 @@ class Player:
         if not self.on_ground:
             self.velocity_y += self.gravity * dt
         else:
-            self.velocity_y = 0
+            if self.velocity_y >= 0:
+                self.velocity_y = 0
         
         self.rect.y += self.velocity_y * dt
         
@@ -93,15 +94,18 @@ class Player:
         
         for tile in block_tiles:
             if self.rect.colliderect(tile):
-                if self.velocity_y > 0 and self.rect.bottom <= tile.top and self.rect.bottom + self.velocity_y * dt > tile.top:
-                    self.rect.bottom = tile.top
-                    self.on_ground = True
-                    break
+                if self.velocity_y > 0:
+                    if self.rect.bottom <= tile.top and self.rect.bottom + self.velocity_y * dt > tile.top:
+                        self.rect.bottom = tile.top
+                        self.on_ground = True
+                        self.velocity_y = 0
+                        break
                 
-                if self.velocity_y < 0 and self.rect.top >= tile.bottom and self.rect.top + self.velocity_y * dt < tile.bottom:
-                    self.rect.top = tile.bottom
-                    self.velocity_y = 0
-                    break
+                if self.velocity_y < 0:
+                    if self.rect.top >= tile.bottom and self.rect.top + self.velocity_y * dt > tile.bottom:
+                        self.rect.top = tile.bottom
+                        self.velocity_y = 0
+                        break
         
         self.render(screen, camera=camera)
 
