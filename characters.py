@@ -18,13 +18,15 @@ class Player:
         self.flip_x = False
         self.current_state = "idle"
         self.moving_x = False
-        self.moving_y = False
         self.on_ground = False
+        self.killed = False
+
+        self.gravity = 500
+        self.jump_force = 250
+        self.y_velocity = 0
         
-        self.speed = 2
-        self.gravity = 700
-        self.jump_force = -300
-        self.velocity_y = 0
+        self.speed = 0
+        
         self.hp = 100
         self.power_points_collected = 0
     
@@ -41,32 +43,39 @@ class Player:
                 self.current_frame = (self.current_frame + 1) % len(self.sprites_states["run"])
                 self.frame_timer = 0
     
-    def move_player(self, speed: int = 2) -> None:
-        if speed < 0:
-            self.flip_x = True
-        elif speed > 0:
-            self.flip_x = False
-        
-        if self.moving_x is True:
-            self.rect.x += speed
-    
-    def jump(self) -> None:
-        if self.on_ground:
-            self.rect.y -= 50
-            self.on_ground = False
-    
-    def gravity_check(self, block_tiles: list) -> None:
-        self.on_ground = False
-        
-        self.rect.y += 5
+    def move_player(self, block_tiles: list) -> None:
+        self.rect.x += self.speed
         
         for tile in block_tiles:
             if self.rect.colliderect(tile):
-                if self.rect.bottom > tile.top and self.rect.bottom - 5 <= tile.top:
+                if self.speed > 0:
+                    self.rect.right = tile.left
+                elif self.speed < 0:
+                    self.rect.left = tile.right
+    
+    def jump(self) -> None:
+        if self.on_ground:
+            self.y_velocity = -self.jump_force
+            self.on_ground = False
+    
+    def apply_gravity(self, dt: float) -> None:
+        self.y_velocity += self.gravity * dt
+        terminal_velocity = 800
+        self.y_velocity = min(self.y_velocity, terminal_velocity)
+    
+    def check_collisions(self, block_tiles: list, dt: float) -> None:
+        self.rect.y += self.y_velocity * dt
+        
+        for tile in block_tiles:
+            if self.rect.colliderect(tile):
+                if self.y_velocity > 0:
                     self.rect.bottom = tile.top
                     self.on_ground = True
-                    break
-                    
+                    self.y_velocity = 0
+                elif self.y_velocity < 0:
+                    self.rect.top = tile.bottom
+                    self.y_velocity = 0
+        
     def get_current_sprite(self) -> str:
         folder = "data/"
         
@@ -76,7 +85,7 @@ class Player:
         return f"{folder}{self.sprites_states[self.current_state]}"
     
     def check_game_over(self) -> bool:
-        if self.rect.y >= 240:
+        if self.rect.y >= 240 or self.killed:
             return True
         
         return False
@@ -91,11 +100,10 @@ class Player:
         screen.blit(current_sprite, rect.topleft)
     
     def update(self, screen: "pygame", camera, dt: float, block_tiles: list) -> None:
-        self.move_player(speed=self.speed)
+        self.apply_gravity(dt)
+        self.move_player(block_tiles)
+        self.check_collisions(block_tiles, dt)
         self.update_animation(dt)
-        
-        self.gravity_check(block_tiles)
-        
         self.render(screen, camera=camera)
 
 

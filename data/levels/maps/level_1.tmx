@@ -3,7 +3,7 @@
  <tileset firstgid="1" source="../main tile set.tsx"/>
  <layer id="1" name="Tile Layer 1" width="100" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt0bENACAMA8GUoOy/LyvQICL5iustf1dVAwAAAAAAwCMr3LSPdribHr83JpnW4wBlH1N0
+   eJzt100KgzAQBeBZWjxTW8X+qUWkFPH+J+kM2o2gBJw0k/QJ39LwxgdJzIkoBwCI1HPHuzUbWWVgDiDqWcveBrIA0X3u4mogC0w6AxlSJ+eC65mAPvyTfch1D3qwwUBmgBg1NN2Jt1wM5PwXcieWO9iw4WYgZ2pOrFjp42UgH6CPEFr0ERWNPr5P6FlSIP8ne8/rVPvIlBxZOTsrruvbL7+Ri4OS5Qxa6/rm0kfojOgj3Cwfhw1hxw==
   </data>
  </layer>
 </map>

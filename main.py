@@ -20,6 +20,8 @@ class Game:
         self.scenes = ["menu", "lvl1", "lvl2", "lvl3", "lvl4", "lvl5", "ending", "game_over"]
         self.current_scene = 0
         
+        self.is_game_over = False
+        
         pygame.display.set_icon(self.icon)
         pygame.display.set_caption("setup")
         
@@ -40,13 +42,17 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
 
+                self.player.moving_x = False
+                
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         self.player.moving_x = True
+                        self.player.flip_x = True
                         self.player.set_speed(-2)
                         self.player.current_state = "run"
                     if event.key == pygame.K_RIGHT:
                         self.player.moving_x = True
+                        self.player.flip_x = False
                         self.player.set_speed(2)
                         self.player.current_state = "run"
                     if event.key == pygame.K_SPACE:
@@ -67,6 +73,8 @@ class Game:
 
             self.player_info()
             
+            print(self.player.on_ground)
+
             if self.player.check_game_over():
                 self.game_over()
             
@@ -101,7 +109,7 @@ class Game:
             player_position=(17, 0),
             enemies_data=enemies[1],
             power_points_data=power_points[1],
-            block_tiles_id=[2, 3]
+            block_tiles_id=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
         )
     
     def set_background_music(self, music_fn: str) -> None:
@@ -122,6 +130,7 @@ class Game:
         self.set_background_music(music_fn="main theme.mp3")
         
     def game_over(self) -> None:
+        self.screen.fill((0, 0, 0))
         game_over_img = pygame.image.load("data/enemy died.png")
         self.screen.blit(game_over_img, (0, 0))
 

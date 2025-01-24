@@ -11,7 +11,7 @@
     "fileStates": {
         "main tile set.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 1,
+            "scaleInDock": 2,
             "scaleInEditor": 1
         },
         "maps/level1.tmx": {
@@ -26,12 +26,12 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 41.75,
-                "y": 145.5
+                "x": 353.25,
+                "y": 150.5
             }
         }
     },
-    "last.imagePath": "C:/Users/PC/Desktop/sprites",
+    "last.imagePath": "C:/Users/PC/Desktop/PythonProjects/my-game/data",
     "map.height": 20,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 12,
