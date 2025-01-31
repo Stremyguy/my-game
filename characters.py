@@ -108,12 +108,17 @@ class Player:
         
         screen.blit(current_sprite, rect.topleft)
     
-    def update(self, screen: "pygame", camera, dt: float, block_tiles: list) -> None:
+    def update(self, screen: "pygame", camera, dt: float, block_tiles: list, level) -> None:
         self.apply_gravity(dt)
         self.move_player(block_tiles)
         self.check_collisions(block_tiles, dt)
         self.update_animation(dt)
         self.render(screen, camera=camera)
+        
+        if level.check_scene_transition():
+            return level.next_scene_id
+        
+        return None
 
 
 class Enemy:

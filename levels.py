@@ -14,6 +14,8 @@ class Level:
                  power_boosters_data: list,
                  music_theme: str,
                  block_tiles_id: list,
+                 transition_tiles_id: dict,
+                 next_scene_id: int
                  ) -> None:
         self.level_name = level_name
         self.player = player
@@ -22,11 +24,12 @@ class Level:
         self.power_boosters_data = power_boosters_data
         self.music_theme = music_theme
         self.block_tiles_id = block_tiles_id
+        self.transition_tiles_id = transition_tiles_id
+        self.next_scene_id = next_scene_id
         
         self.map = load_level(self.level_name)
         self.height = self.map.height
         self.width = self.map.width
-        
         self.tile_size = self.map.tilewidth
         
         self.setup()
@@ -68,6 +71,32 @@ class Level:
                         )
         
         return block_tiles
+    
+    def get_transition_tiles(self) -> list:
+        transition_tiles = []
+        
+        for y in range(self.height):
+            for x in range(self.width):
+                gid = self.map.get_tile_gid(x, y, 0)
+                
+                if gid:
+                    props = self.map.tile_properties.get(gid, {})
+                    
+                    tile_id = props.get("id")
+                    
+                    if tile_id in self.transition_tiles_id:
+                        transition_tiles.append(
+                            pygame.Rect(x * self.tile_size, y * self.tile_size, self.tile_size, self.tile_size)
+                        )
+        
+        return transition_tiles
+    
+    def check_scene_transition(self) -> bool:
+        for tile in self.get_transition_tiles():
+            if self.player.rect.colliderect(tile):
+                return True
+        
+        return False
     
     def render(self, screen: "pygame", camera) -> None:
         for enemy in self.enemies_sprites:
