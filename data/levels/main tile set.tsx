@@ -1,97 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.1" name="main tile set" tilewidth="12" tileheight="12" tilecount="31" columns="0">
+<tileset version="1.10" tiledversion="1.11.1" name="tile_set" tilewidth="12" tileheight="12" tilecount="30" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
- <tile id="7">
+ <tile id="0">
   <image source="../../../../sprites/ground2.png" width="12" height="12"/>
  </tile>
- <tile id="8">
+ <tile id="1">
   <image source="../../../../sprites/ground1.png" width="12" height="12"/>
  </tile>
- <tile id="10">
-  <image source="../../../../sprites/sky.png" width="12" height="12"/>
- </tile>
- <tile id="60">
+ <tile id="2">
   <image source="../block_1_blue.png" width="12" height="12"/>
  </tile>
- <tile id="61">
+ <tile id="3">
   <image source="../block_1_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="62">
+ <tile id="4">
   <image source="../block_2_blue.png" width="12" height="12"/>
  </tile>
- <tile id="63">
+ <tile id="5">
   <image source="../block_2_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="64">
+ <tile id="6">
   <image source="../block_3_blue.png" width="12" height="12"/>
  </tile>
- <tile id="65">
+ <tile id="7">
   <image source="../block_3_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="66">
+ <tile id="8">
   <image source="../block_4_blue.png" width="12" height="12"/>
  </tile>
- <tile id="67">
+ <tile id="9">
   <image source="../block_4_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="68">
+ <tile id="10">
   <image source="../block_5_blue.png" width="12" height="12"/>
  </tile>
- <tile id="69">
+ <tile id="11">
   <image source="../block_5_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="70">
+ <tile id="12">
   <image source="../block_6_blue.png" width="12" height="12"/>
  </tile>
- <tile id="71">
+ <tile id="13">
   <image source="../block_6_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="72">
+ <tile id="14">
   <image source="../block_7_blue.png" width="12" height="12"/>
  </tile>
- <tile id="73">
+ <tile id="15">
   <image source="../block_7_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="74">
+ <tile id="16">
   <image source="../block_8_blue.png" width="12" height="12"/>
  </tile>
- <tile id="75">
+ <tile id="17">
   <image source="../block_8_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="76">
+ <tile id="18">
   <image source="../block_9_blue.png" width="12" height="12"/>
  </tile>
- <tile id="77">
+ <tile id="19">
   <image source="../block_9_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="78">
+ <tile id="20">
   <image source="../block_10_blue.png" width="12" height="12"/>
  </tile>
- <tile id="79">
+ <tile id="21">
   <image source="../block_10_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="80">
+ <tile id="22">
   <image source="../block_11_blue.png" width="12" height="12"/>
  </tile>
- <tile id="81">
+ <tile id="23">
   <image source="../block_11_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="82">
+ <tile id="24">
   <image source="../block_12_blue.png" width="12" height="12"/>
  </tile>
- <tile id="83">
+ <tile id="25">
   <image source="../block_12_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="84">
+ <tile id="26">
   <image source="../block_13_blue.png" width="12" height="12"/>
  </tile>
- <tile id="85">
+ <tile id="27">
   <image source="../block_13_yellow.png" width="12" height="12"/>
  </tile>
- <tile id="86">
+ <tile id="28">
   <image source="../block_14_blue.png" width="12" height="12"/>
  </tile>
- <tile id="87">
+ <tile id="29">
   <image source="../block_14_yellow.png" width="12" height="12"/>
  </tile>
 </tileset>

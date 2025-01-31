@@ -26,9 +26,14 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 353.25,
-                "y": 150.5
+                "x": 391,
+                "y": 176.5
             }
+        },
+        "tile_set.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 2,
+            "scaleInEditor": 3
         }
     },
     "last.imagePath": "C:/Users/PC/Desktop/PythonProjects/my-game/data",
@@ -38,13 +43,16 @@
     "map.tileWidth": 12,
     "map.width": 100,
     "openFiles": [
-        "main tile set.tsx",
-        "maps/level_1.tmx"
+        "maps/level_1.tmx",
+        "tile_set.tsx"
     ],
     "project": "level_1.tiled-project",
     "recentFiles": [
-        "main tile set.tsx",
+        "tile_set.tsx",
         "maps/level_1.tmx",
+        "main tile set.tsx",
         "maps/level1.tmx"
-    ]
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.type": 1
 }

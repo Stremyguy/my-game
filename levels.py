@@ -1,6 +1,7 @@
 from characters import Player
+from power_booster import PowerBooster
+from instruments import load_level, load_music
 
-import pytmx
 import pygame
 
 
@@ -10,17 +11,19 @@ class Level:
                  player: "Player",
                  player_position: tuple,
                  enemies_data: list,
-                 power_points_data: list,
-                 block_tiles_id: list
+                 power_boosters_data: list,
+                 music_theme: str,
+                 block_tiles_id: list,
                  ) -> None:
         self.level_name = level_name
         self.player = player
         self.player_position = player_position
         self.enemies_data = enemies_data
-        self.power_points_data = power_points_data
+        self.power_boosters_data = power_boosters_data
+        self.music_theme = music_theme
         self.block_tiles_id = block_tiles_id
         
-        self.map = pytmx.load_pygame(f"data/levels/maps/{level_name}.tmx")
+        self.map = load_level(self.level_name)
         self.height = self.map.height
         self.width = self.map.width
         
@@ -29,23 +32,50 @@ class Level:
         self.setup()
     
     def setup(self) -> None:
+        pygame.mixer.init()
+        pygame.mixer.music.load(load_music(self.music_theme))
+        pygame.mixer.music.play(-1)
         self.player.set_position(self.player_position[0], self.player_position[1])
+        self.power_boosters_sprites = pygame.sprite.Group()
+        
+        self.enemies_sprites = pygame.sprite.Group()
+        
+        for enemy in self.enemies_data:
+            enemy_sprite = enemy
+            self.enemies_sprites.add(enemy_sprite)
+        
+        for power_booster in self.power_boosters_data:
+            pos = power_booster[0]
+            curr_power_booster = PowerBooster(self.power_boosters_sprites)
+            curr_power_booster.set_pos(pos[0], pos[1])
+            curr_power_booster.set_sprite(power_booster[1])
 
     def get_block_tiles(self) -> list:
         block_tiles = []
         
         for y in range(self.height):
             for x in range(self.width):
-                tile_id = self.map.get_tile_gid(x, y, 0)
-
-                if tile_id in self.block_tiles_id:
-                    block_tiles.append(
-                        pygame.Rect(x * self.tile_size, y * self.tile_size, self.tile_size, self.tile_size)
-                    )
+                gid = self.map.get_tile_gid(x, y, 0)
+                
+                if gid:
+                    props = self.map.tile_properties.get(gid, {})
+                    
+                    tile_id = props.get("id")
+                    
+                    if tile_id in self.block_tiles_id:
+                        block_tiles.append(
+                            pygame.Rect(x * self.tile_size, y * self.tile_size, self.tile_size, self.tile_size)
+                        )
         
         return block_tiles
     
     def render(self, screen: "pygame", camera) -> None:
+        for enemy in self.enemies_sprites:
+            enemy.render(camera)
+            
+        for power_booster in self.power_boosters_sprites:
+            screen.blit(power_booster.image, power_booster.rect.topleft)
+        
         for y in range(self.height):
             for x in range(self.width):
                 image = self.map.get_tile_image(x, y, 0)
