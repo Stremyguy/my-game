@@ -41,6 +41,7 @@ class Game:
     def switch_scene(self, scene_id: int) -> None:
         if scene_id in self.scenes:
             self.current_scene = scene_id
+            self.current_level = self.levels[scene_id]
     
     def game_loop(self) -> None:
         running = True
@@ -61,13 +62,12 @@ class Game:
                     self.player_input(event)
             
             if self.current_scene in self.scenes:
-                self.scenes[self.current_scene]()
+                self.scenes[self.current_scene](dt)
         
             next_scene = self.player.update(self.screen, self.camera, dt, self.current_level.get_block_tiles(), self.current_level)
         
             if next_scene is not None:
-                scene_id = next_scene
-                pass
+                self.switch_scene(next_scene)
         
             pygame.display.update()
             self.clock.tick(self.fps)
@@ -97,16 +97,16 @@ class Game:
         self.screen.fill((0, 0, 0))
         self.screen.blit(load_image("virus.png"), (10, 10))
     
-    def level_1(self) -> None:
-        self.run_level(self.current_level)
+    def level_1(self, dt: float) -> None:
+        self.run_level(self.current_level, dt)
     
-    def level_2(self) -> None:
-        pass
+    def level_2(self, dt: float) -> None:
+        self.run_level(self.current_level, dt)
     
-    def level_3(self) -> None:
-        pass
+    def level_3(self, dt: float) -> None:
+        self.run_level(self.current_level, dt)
     
-    def ending(self) -> None:
+    def ending(self, dt=None) -> None:
         pass
     
     def game_over(self) -> None:
@@ -114,16 +114,16 @@ class Game:
         game_over_img = load_image("game_over.png")
         self.screen.blit(game_over_img, (0, WINDOW_HEIGHT // 2 - 50))
     
-    def run_level(self, level: "Level") -> None:
+    def run_level(self, level: "Level", dt: float) -> None:
         self.camera.update(self.player)
         level.render(screen=self.screen, camera=self.camera)
             
         for enemy in level.enemies_sprites:
             enemy.update(screen=self.screen, camera=self.camera, player=self.player)
-            
-        block_tiles = level.get_block_tiles()
-        self.player.update(screen=self.screen, camera=self.camera, dt=dt, block_tiles=block_tiles)
 
+        block_tiles = level.get_block_tiles()
+        self.player.update(screen=self.screen, camera=self.camera, dt=dt, block_tiles=block_tiles, level=level)
+        
         self.player_info()
     
     def levels_setup(self) -> None:
@@ -153,21 +153,40 @@ class Game:
                 [(30, 30), "power booster.png"]]
         }
         
-        self.level_1 = Level(
-            level_name="level_1",
-            player=self.player,
-            player_position=(0, 110),
-            enemies_data=enemies[1],
-            power_boosters_data=power_boosters[1],
-            music_theme="theme test.wav",
-            block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-                            14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-                            25, 26, 27, 28, 29, 31, 32, 33, 34,
-                            36, 37, 38, 39, 40, 41, 50, 51, 52, 53,
-                            54, 55, 56, 58],
-        )
+        self.levels = {
+            1: Level(
+                level_name="level_1",
+                player=self.player,
+                player_position=(0, 110),
+                enemies_data=enemies[1],
+                power_boosters_data=power_boosters[1],
+                music_theme="theme test.wav",
+                block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
+                                11, 12, 13, 14, 15, 16, 17, 18, 19, 
+                                20, 21, 22, 23, 24, 25, 26, 27, 28, 
+                                29, 31, 32, 33, 34, 36, 37, 38, 39, 
+                                40, 41, 50, 51, 52, 53, 54, 55, 56, 58],
+                transition_tiles_id=[35],
+                next_scene_id=2
+            ),
+            2: Level(
+                level_name="level_2",
+                player=self.player,
+                player_position=(0, 110),
+                enemies_data=enemies[1],
+                power_boosters_data=power_boosters[1],
+                music_theme="theme test.wav",
+                block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
+                                11, 12, 13, 14, 15, 16, 17, 18, 19, 
+                                20, 21, 22, 23, 24, 25, 26, 27, 28, 
+                                29, 31, 32, 33, 34, 36, 37, 38, 39, 
+                                40, 41, 50, 51, 52, 53, 54, 55, 56, 58],
+                transition_tiles_id=[35],
+                next_scene_id=1
+            )
+        }
         
-        self.current_level = self.level_1
+        self.current_level = self.levels[1]
         
     def player_info(self) -> None:
         my_font = pygame.font.SysFont("Comic Sans MS", 20)
