@@ -5,8 +5,8 @@
     },
     "activeFile": "maps/level_1.tmx",
     "expandedProjectPaths": [
-        "maps",
-        "."
+        ".",
+        "maps"
     ],
     "fileStates": {
         "main tile set.tsx": {
@@ -26,8 +26,16 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1119.5,
-                "y": 176.5
+                "x": 242.25,
+                "y": 176.25
+            }
+        },
+        "maps/level_2.tmx": {
+            "scale": 0.9769166666666667,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 633.1143905143736,
+                "y": 120.27637976627142
             }
         },
         "tile_set.tsx": {
@@ -44,10 +52,12 @@
     "map.width": 100,
     "openFiles": [
         "maps/level_1.tmx",
-        "tile_set.tsx"
+        "tile_set.tsx",
+        "maps/level_2.tmx"
     ],
     "project": "level_1.tiled-project",
     "recentFiles": [
+        "maps/level_2.tmx",
         "tile_set.tsx",
         "maps/level_1.tmx",
         "main tile set.tsx",

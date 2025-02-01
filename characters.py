@@ -72,7 +72,7 @@ class Player:
         terminal_velocity = 800
         self.y_velocity = min(self.y_velocity, terminal_velocity)
     
-    def check_collisions(self, block_tiles: list, dt: float) -> None:
+    def check_collisions(self, block_tiles: list, enemy_sprites: "pygame", dt: float) -> None:
         self.rect.y += self.y_velocity * dt
         
         for tile in block_tiles:
@@ -93,7 +93,7 @@ class Player:
         
         return f"{folder}{self.sprites_states[self.current_state]}"
     
-    def check_game_over(self) -> bool:            
+    def check_game_over(self) -> bool:
         if self.rect.y >= 240 or self.killed or self.hp <= 0:
             return True
         
@@ -108,10 +108,10 @@ class Player:
         
         screen.blit(current_sprite, rect.topleft)
     
-    def update(self, screen: "pygame", camera, dt: float, block_tiles: list, level) -> None:
+    def update(self, screen: "pygame", camera, dt: float, block_tiles: list, enemy_sprites: "pygame", level) -> None:
         self.apply_gravity(dt)
         self.move_player(block_tiles)
-        self.check_collisions(block_tiles, dt)
+        self.check_collisions(block_tiles, enemy_sprites, dt)
         self.update_animation(dt)
         self.render(screen, camera=camera)
         
@@ -231,7 +231,7 @@ class FlyingVirus(pygame.sprite.Sprite):
     
     def check_collision(self, player) -> None:
         if pygame.sprite.collide_rect(self, player):
-            player.hp -= self.hit_force
+            player.power_level -= 1
             return True
         return False
     
@@ -317,14 +317,16 @@ class RockSleeper(pygame.sprite.Sprite):
     
     def check_collision(self, player) -> None:
         for bullet in self.bullets:
-            if pygame.sprite.collide_rect(bullet, player):
-                player.hp -= self.hit_force
+            if pygame.sprite.collide_rect(bullet, player) and not bullet.hit:
+                player.power_level -= 1
+                bullet.hit = True
                 return True
         return False
     
     def render(self, camera) -> None:
-        camera.apply(self.rect)
-        self.screen.blit(self.image, self.rect.topleft)
+        enemy_rect = self.rect.copy()
+        camera.apply(enemy_rect)
+        self.screen.blit(self.image, enemy_rect.topleft)
         
         for bullet in self.bullets:
             bullet.render(self.screen, camera)
@@ -333,9 +335,6 @@ class RockSleeper(pygame.sprite.Sprite):
         self.attack()
         self.check_collision(player)
         self.render(camera)
-        
-        print(f"{self.x}; {self.y}")
-        
         self.bullets.update()
 
 
@@ -359,6 +358,7 @@ class Bullet(pygame.sprite.Sprite):
         self.y_dir = y_dir
         
         self.speed = speed
+        self.hit = False
         
         self.set_pos(x=self.x, y=self.y)
     
@@ -373,8 +373,9 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.y = y
     
     def render(self, screen: pygame.Surface, camera) -> None:
-        camera.apply(self.rect)
-        screen.blit(self.image, self.rect.topleft)
+        bullet_rect = self.rect.copy()
+        camera.apply(bullet_rect)
+        screen.blit(self.image, bullet_rect.topleft)
     
     def update(self) -> None:
         self.move()

@@ -4,7 +4,7 @@
  <tileset firstgid="31" source="../tile_set.tsx"/>
  <layer id="1" name="Tile Layer 1" width="100" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt170KAjEQBOC8iYoIimDjP3qNf71BxXv/F7lpxOM4Y8LF7GKm+KoUmc00m8IYUxARERER0V8qFWSgdxcv0llyMoCRh13NUEFurY5w/uIU4Z45rGGpYGYyZgpbmCjIktIM9jAOPJPmynaFJ1wU5Ay1gA2sAs+kubLd4AF3BTljzWXZRzL13bJtLtvSxy/20C77rfY+fOcqzec+bEOzj5iddP1vpOijlzmJN3Ld1c+cTx8p75R+D2kSfRwcKsFgwYo=
+   eJzt0bEJwDAMRUGN4kXcZIzsP0ialIaADbKIr7hC3RevR0RPcH/c5NKjFj1q0aOWNrB708n0qEWPerQAAIAzXa82Yff2P1rpMWP3v9Vl9wBY9QBkfbU1
   </data>
  </layer>
 </map>

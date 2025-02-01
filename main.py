@@ -1,8 +1,9 @@
 import pygame
+import time
 
 from characters import Player, FlyingVirus, RockSleeper
 from levels import Level
-from instruments import load_image
+from instruments import load_image, load_music
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 256, 240
 
@@ -27,36 +28,41 @@ class Game:
             5: self.game_over
         }
         self.level_ids = [1, 2, 3]
-        self.current_scene = 1
+        self.current_scene = 0
         self.is_game_over = False
+        self.is_paused = False
         
+        # fonts
+        pygame.font.init()
+        self.my_font = pygame.font.SysFont("Comic Sans MS", 20)
+        
+        pygame.mixer.init()
+
         pygame.display.set_icon(self.icon)
         pygame.display.set_caption("setup")
-        
-        pygame.font.init()
         
         self.levels_setup()
         self.game_loop()
     
-    def switch_scene(self, scene_id: int) -> None:
-        if scene_id in self.scenes:
-            self.current_scene = scene_id
-            self.current_level = self.levels[scene_id]
-    
     def game_loop(self) -> None:
-        running = True
+        self.running = True
         
-        self.camera = Camera(level_width=self.current_level.width * self.current_level.tile_size,
-                             level_height=self.current_level.height * self.current_level.tile_size)
+        self.camera = Camera(
+                level_width=self.current_level.width * self.current_level.tile_size,
+                level_height=self.current_level.height * self.current_level.tile_size
+            )
         
-        while running:
+        while self.running:
             dt = self.clock.tick(self.fps) / 1000.0
             
             self.screen.fill((0, 0, 0))
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        self.pause_game()
                 
                 if self.current_scene in self.level_ids:
                     self.player_input(event)
@@ -64,11 +70,11 @@ class Game:
             if self.current_scene in self.scenes:
                 self.scenes[self.current_scene](dt)
         
-            next_scene = self.player.update(self.screen, self.camera, dt, self.current_level.get_block_tiles(), self.current_level)
+            next_scene = self.current_level.check_scene_transition()
         
-            if next_scene is not None:
+            if next_scene is not None and next_scene in self.levels:
                 self.switch_scene(next_scene)
-        
+            
             pygame.display.update()
             self.clock.tick(self.fps)
     
@@ -86,16 +92,58 @@ class Game:
                 self.player.current_state = "run"
             if event.key == pygame.K_SPACE:
                 self.player.jump()
-                        
+        
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 self.player.moving_x = False
                 self.player.set_speed(0)
                 self.player.current_state = "idle"
     
-    def main_menu(self) -> None:
+    def draw_text(self, text: str, font: "pygame", text_color: tuple, x: int, y: int, align: str = "center") -> None:
+        img = font.render(text, True, text_color)
+        if align == "center":
+            rect = img.get_rect(center=(x, y))
+        elif align == "right":
+            rect = img.get_rect(topright=(x, y))
+        elif align == "left":
+            rect = img.get_rect(topleft=(x, y))
+            
+        self.screen.blit(img, rect)
+    
+    def switch_scene(self, scene_id: int) -> None:
+        if scene_id in self.scenes:
+            self.current_scene = scene_id
+            self.current_level = self.levels[scene_id]
+            
+            self.player.set_position(*self.current_level.player_position)
+            
+            self.camera = Camera(
+                level_width=self.current_level.width * self.current_level.tile_size,
+                level_height=self.current_level.height * self.current_level.tile_size
+            )
+    
+    def pause_game(self) -> None:
+        is_paused = True
+        
+        while is_paused:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        is_paused = False
+                if event.type == pygame.QUIT:
+                    self.running = False
+                    pygame.quit()
+    
+    def main_menu(self, event: None, dt: float = None) -> None:
         self.screen.fill((0, 0, 0))
         self.screen.blit(load_image("virus.png"), (10, 10))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.KEYDOWN or \
+                    event.type == pygame.MOUSEBUTTONDOWN:
+                self.current_scene = 1
     
     def level_1(self, dt: float) -> None:
         self.run_level(self.current_level, dt)
@@ -117,13 +165,13 @@ class Game:
     def run_level(self, level: "Level", dt: float) -> None:
         self.camera.update(self.player)
         level.render(screen=self.screen, camera=self.camera)
-            
+                
         for enemy in level.enemies_sprites:
             enemy.update(screen=self.screen, camera=self.camera, player=self.player)
 
         block_tiles = level.get_block_tiles()
-        self.player.update(screen=self.screen, camera=self.camera, dt=dt, block_tiles=block_tiles, level=level)
-        
+        self.player.update(screen=self.screen, camera=self.camera, dt=dt, block_tiles=block_tiles, enemy_sprites=self.enemy_sprites, level=level)
+            
         self.player_info()
     
     def levels_setup(self) -> None:
@@ -132,7 +180,8 @@ class Game:
         enemies = {
             1: [
                 [RockSleeper((50, 180), hit_force = 30, level_width=1200, screen=self.screen)],
-                [RockSleeper((190, 180), hit_force = 30, level_width=1200, screen=self.screen)]],
+                [RockSleeper((190, 180), hit_force = 30, level_width=1200, screen=self.screen)],
+                [RockSleeper((443, 121), hit_force = 30, level_width=1200, screen=self.screen)],],
             2: [
                 [FlyingVirus((0, 4), speed=2, amplitude=100, frequency=0.1, hit_force = 30, level_width=1200, screen=self.screen)],
                 [FlyingVirus((100, 4), speed=2, amplitude=100, frequency=0.1, hit_force = 30, level_width=1200, screen=self.screen)],
@@ -157,10 +206,10 @@ class Game:
             1: Level(
                 level_name="level_1",
                 player=self.player,
-                player_position=(0, 110),
+                player_position=(0, 180),
                 enemies_data=enemies[1],
                 power_boosters_data=power_boosters[1],
-                music_theme="theme test.wav",
+                music_theme="main theme.mp3",
                 block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
                                 11, 12, 13, 14, 15, 16, 17, 18, 19, 
                                 20, 21, 22, 23, 24, 25, 26, 27, 28, 
@@ -172,8 +221,23 @@ class Game:
             2: Level(
                 level_name="level_2",
                 player=self.player,
-                player_position=(0, 110),
-                enemies_data=enemies[1],
+                player_position=(0, 180),
+                enemies_data=enemies[2],
+                power_boosters_data=power_boosters[1],
+                music_theme="theme test.wav",
+                block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
+                                11, 12, 13, 14, 15, 16, 17, 18, 19, 
+                                20, 21, 22, 23, 24, 25, 26, 27, 28, 
+                                29, 31, 32, 33, 34, 36, 37, 38, 39, 
+                                40, 41, 50, 51, 52, 53, 54, 55, 56, 58],
+                transition_tiles_id=[35],
+                next_scene_id=3
+            ),
+            3: Level(
+                level_name="bossfight_1",
+                player=self.player,
+                player_position=(0, 0),
+                enemies_data=enemies[3],
                 power_boosters_data=power_boosters[1],
                 music_theme="theme test.wav",
                 block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
@@ -187,15 +251,19 @@ class Game:
         }
         
         self.current_level = self.levels[1]
-        
+    
     def player_info(self) -> None:
-        my_font = pygame.font.SysFont("Comic Sans MS", 20)
+        current_lvl_name = self.current_level.level_name.split("_")
+        level_info = ""
+        p_points_info = str(self.player.power_points_collected)
         
-        hp_text_surface = my_font.render(f"hp: {self.player.hp}", False, (0, 0, 0))
-        p_points_text_surface = my_font.render(str(self.player.power_points_collected), False, (0, 0, 0))
+        if "level" in current_lvl_name:
+            level_info = f"Lvl: {current_lvl_name[1]}"
+        elif "bossfight" in current_lvl_name:
+            level_info = f"Bf: {current_lvl_name[1]}"
         
-        self.screen.blit(hp_text_surface, (185, 0))
-        self.screen.blit(p_points_text_surface, (240, 23))
+        self.draw_text(level_info, self.my_font, (0, 0, 0), 240, 0, "right")
+        self.draw_text(p_points_info, self.my_font, (0, 0, 0), 240, 23, "right")
 
 
 class Camera:

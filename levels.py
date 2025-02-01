@@ -1,6 +1,6 @@
 from characters import Player
 from power_booster import PowerBooster
-from instruments import load_level, load_music
+from instruments import load_level
 
 import pygame
 
@@ -35,9 +35,6 @@ class Level:
         self.setup()
     
     def setup(self) -> None:
-        pygame.mixer.init()
-        pygame.mixer.music.load(load_music(self.music_theme))
-        pygame.mixer.music.play(-1)
         self.player.set_position(self.player_position[0], self.player_position[1])
         self.power_boosters_sprites = pygame.sprite.Group()
         
@@ -94,9 +91,9 @@ class Level:
     def check_scene_transition(self) -> bool:
         for tile in self.get_transition_tiles():
             if self.player.rect.colliderect(tile):
-                return True
+                return self.next_scene_id
         
-        return False
+        return None
     
     def render(self, screen: "pygame", camera) -> None:
         for enemy in self.enemies_sprites:
