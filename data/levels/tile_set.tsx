@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.1" name="tile_set" tilewidth="12" tileheight="12" tilecount="52" columns="0">
+<tileset version="1.10" tiledversion="1.11.1" name="tile_set" tilewidth="12" tileheight="12" tilecount="68" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image source="../../../../sprites/ground2.png" width="12" height="12"/>
@@ -156,5 +156,53 @@
  </tile>
  <tile id="59">
   <image source="../hooks1.png" width="12" height="12"/>
+ </tile>
+ <tile id="60">
+  <image source="../block_1_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="61">
+  <image source="../block_2_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="62">
+  <image source="../block_3_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="63">
+  <image source="../block_4_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="64">
+  <image source="../block_5_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="65">
+  <image source="../block_6_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="66">
+  <image source="../block_7_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="67">
+  <image source="../block_8_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="68">
+  <image source="../block_9_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="69">
+  <image source="../block_10_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="70">
+  <image source="../block_11_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="71">
+  <image source="../block_12_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="72">
+  <image source="../block_13_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="73">
+  <image source="../block_14_metal.png" width="12" height="12"/>
+ </tile>
+ <tile id="74">
+  <image source="../block_metal_poison.png" width="12" height="12"/>
+ </tile>
+ <tile id="75">
+  <image source="../black_fake.png" width="12" height="12"/>
  </tile>
 </tileset>

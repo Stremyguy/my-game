@@ -3,7 +3,7 @@ import math
 import random
 
 from instruments import load_image
-from particles import create_particles, particles_group
+from particles import ParticleManager
 
 
 class Player:
@@ -35,7 +35,6 @@ class Player:
         
         self.hp = 100
         self.power_level = 0
-        self.power_points_collected = 0
     
     def set_position(self, x: int, y: int) -> None:
         self.rect.topleft = (x, y)
@@ -94,7 +93,7 @@ class Player:
         return f"{folder}{self.sprites_states[self.current_state]}"
     
     def check_game_over(self) -> bool:
-        if self.rect.y >= 240 or self.killed or self.hp <= 0:
+        if self.rect.y >= 240 or self.power_level < 0 or self.hp <= 0:
             return True
         
         return False
@@ -128,13 +127,13 @@ class Enemy:
 
 class FlyingVirus(pygame.sprite.Sprite):
     def __init__(self, 
-                 position: tuple, 
-                 speed: float,
-                 amplitude: int, 
-                 frequency: float,
-                 hit_force: int, 
-                 level_width: int, 
-                 screen: "pygame") -> None:
+                 position: tuple = (0, 0), 
+                 speed: float = 2,
+                 amplitude: int = 100, 
+                 frequency: float = 0.1,
+                 hit_force: int = 30, 
+                 level_width: int = 1200, 
+                 screen: "pygame" = None) -> None:
         super().__init__()
         self.x = position[0]
         self.y = position[1]
@@ -247,22 +246,20 @@ class FlyingVirus(pygame.sprite.Sprite):
             self.update_circle_movement()
         else:
             self.move()
-        particles_group.update()
         
         self.attack()
         self.check_collision(player)
         self.render(camera)
-        particles_group.draw(screen)
         
         # self.bullets.update()
 
 
 class RockSleeper(pygame.sprite.Sprite):
     def __init__(self, 
-                 position: tuple,
-                 hit_force: int, 
-                 level_width: int, 
-                 screen: "pygame") -> None:
+                 position: tuple = (0, 0),
+                 hit_force: int = 30, 
+                 level_width: int = 1200, 
+                 screen: "pygame" = None) -> None:
         super().__init__()
         self.x = position[0]
         self.y = position[1]
@@ -274,15 +271,20 @@ class RockSleeper(pygame.sprite.Sprite):
         self.level_width = level_width
         self.screen = screen
         
+        self.attack_counter = 0
+        
         self.attack_timer = 0
+        self.sleep_timer = 0
         
         self.sprites_states = {
             "idle": "enemy_2_idle.png",
             "attack": "enemy_2_attack.png",
+            "sleep": "enemy_2_sleep.png"
         }
         
         self.image = load_image("enemy_2_idle.png")
         self.rect = self.image.get_rect()
+        self.particle_manager = ParticleManager()
         self.mask = pygame.mask.from_surface(self.image)
 
         self.bullets = pygame.sprite.Group()
@@ -297,6 +299,9 @@ class RockSleeper(pygame.sprite.Sprite):
         self.image = load_image(self.sprites_states[state])
     
     def spawn_bullet(self) -> None:
+        self.particle_manager.create_explosion((self.rect.centerx, self.rect.bottom - 15))
+        self.attack_counter += 1
+        
         bullet = Bullet(position=(self.rect.centerx, self.rect.bottom - 15),
                         speed=-10,
                         sprite_file="virus.png",
@@ -306,20 +311,30 @@ class RockSleeper(pygame.sprite.Sprite):
         self.bullets.add(bullet)
     
     def attack(self) -> None:
-        self.attack_timer += 1
-        
-        if self.attack_timer >= 50:
-            self.set_state("attack")
-            self.spawn_bullet()
-            self.attack_timer = 0
-        elif self.attack_timer >= 5:
-            self.set_state("idle")
+        if self.attack_counter <= 5:
+            self.attack_timer += 1
+            
+            if self.attack_timer >= 50:
+                self.set_state("attack")
+                self.spawn_bullet()
+                self.attack_timer = 0
+            elif self.attack_timer >= 5:
+                self.set_state("idle")
+        else:
+            self.sleep_timer += 1
+            self.set_state("sleep")
+            
+            if self.sleep_timer >= 150:
+                self.sleep_timer = 0
+                self.attack_counter = 0
+                self.attack()
     
     def check_collision(self, player) -> None:
         for bullet in self.bullets:
             if pygame.sprite.collide_rect(bullet, player) and not bullet.hit:
                 player.power_level -= 1
                 bullet.hit = True
+                bullet.kill()
                 return True
         return False
     

@@ -1,20 +1,35 @@
 import pygame
+from instruments import load_image
 
 
 class PowerBooster(pygame.sprite.Sprite):
-    def __init__(self, *groups) -> None:
-        super().__init__(*groups)
-        self.image = pygame.image.load("data/power booster.png")
+    def __init__(self, 
+                 position: tuple = (0, 0), 
+                 sprite: str = "power booster.png",
+                 ) -> None:
+        super().__init__()
+        self.image = load_image(sprite)
         self.rect = self.image.get_rect()
-        self.rect.x = 0
-        self.rect.y = 0
+        
+        self.set_pos(x=position[0], y=position[1])
         
     def set_pos(self, x: int = 0, y: int = 0) -> None:
         self.rect.x = x
         self.rect.y = y
     
     def set_sprite(self, sprite: str) -> None:
-        self.image = pygame.image.load(f"data/{sprite}")
+        self.image = load_image(sprite)
     
-    def update(self) -> None:
-        pass
+    def check_collision(self, player) -> None:
+        if pygame.sprite.collide_rect(self, player):
+            player.power_level += 1
+            self.kill()
+    
+    def render(self, screen: "pygame", camera) -> None:
+        booster_rect = self.rect.copy()
+        camera.apply(booster_rect)
+        screen.blit(self.image, booster_rect.topleft)
+    
+    def update(self, screen: "pygame", camera, player) -> None:
+        self.render(screen, camera)
+        self.check_collision(player)

@@ -36,8 +36,8 @@ class Level:
     
     def setup(self) -> None:
         self.player.set_position(self.player_position[0], self.player_position[1])
-        self.power_boosters_sprites = pygame.sprite.Group()
         
+        self.power_boosters_sprites = pygame.sprite.Group()
         self.enemies_sprites = pygame.sprite.Group()
         
         for enemy in self.enemies_data:
@@ -46,9 +46,8 @@ class Level:
         
         for power_booster in self.power_boosters_data:
             pos = power_booster[0]
-            curr_power_booster = PowerBooster(self.power_boosters_sprites)
-            curr_power_booster.set_pos(pos[0], pos[1])
-            curr_power_booster.set_sprite(power_booster[1])
+            curr_power_booster = PowerBooster(position=pos)
+            self.power_boosters_sprites.add(curr_power_booster)
 
     def get_block_tiles(self) -> list:
         block_tiles = []
@@ -96,12 +95,6 @@ class Level:
         return None
     
     def render(self, screen: "pygame", camera) -> None:
-        for enemy in self.enemies_sprites:
-            enemy.render(camera)
-            
-        for power_booster in self.power_boosters_sprites:
-            screen.blit(power_booster.image, power_booster.rect.topleft)
-        
         for y in range(self.height):
             for x in range(self.width):
                 image = self.map.get_tile_image(x, y, 0)
