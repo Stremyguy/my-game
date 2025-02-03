@@ -289,7 +289,6 @@ class Game:
         self.current_level = self.levels[1]
     
     def player_info(self) -> None:
-        print(self.player.rect.x, self.player.rect.y)
         current_lvl_name = self.current_level.level_name.split("_")
         level_info = ""
         p_points_info = str(self.player.power_level)
