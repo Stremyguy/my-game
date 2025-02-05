@@ -1,49 +1,50 @@
 import pygame
 
-from characters import Player, FlyingVirus, RockSleeper
+from characters import Player
 from levels import Level
-from power_booster import PowerBooster
-from instruments import load_image, load_font, load_music
-
-WINDOW_WIDTH, WINDOW_HEIGHT = 256, 240
+from instruments import load_image, load_font, load_db, init_music, play_music, stop_music, play_sound
+from constants import *
+from db_handler import load_characters_from_db
 
 
 class Game:
     def __init__(self) -> None:
-        self.fps = 60
+        self.fps = FPS
         
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.icon = load_image("run2.png")
-        
         self.clock = pygame.time.Clock()
-        
         self.player = Player()
         
         self.scenes = {
             0: self.main_menu,
-            1: self.level_1,
-            2: self.level_2,
-            3: self.level_3,
+            1: self.game_level,
+            2: self.game_level,
+            3: self.game_level,
             4: self.ending,
             5: self.game_over
         }
         
         self.level_ids = [1, 2, 3]
         self.current_scene = 0
-        self.is_game_over = False
         self.is_paused = False
         
-        self.particles = pygame.sprite.Group()
+        # game over stuff
+        self.game_over_played = False
+        self.game_over_counter = 0
+        
+        # winning stuff
+        self.win_played = False
+        self.win_counter = 0
         
         # fonts
         pygame.font.init()
         self.my_font = pygame.font.Font(load_font("PressStartFont.ttf"), 13)
         
-        pygame.mixer.init()
-
         pygame.display.set_icon(self.icon)
-        pygame.display.set_caption("setup")
+        pygame.display.set_caption("Jayver")
         
+        init_music()
         self.levels_setup()
         self.game_loop()
     
@@ -73,15 +74,18 @@ class Game:
             if self.current_scene in self.scenes:
                 self.scenes[self.current_scene](dt, event)
         
-            next_scene = self.current_level.check_scene_transition()
+            next_scene = None
         
-            if next_scene is not None and next_scene in self.levels:
+            if self.current_scene in self.level_ids:
+                next_scene = self.current_level.check_scene_transition()
+
+            if next_scene is not None:
                 self.switch_scene(next_scene)
             
             if self.player.check_game_over():
-                self.current_scene = 5
-            
-            # print(self.player.power_level)
+                self.switch_scene(5)
+            elif self.player.check_win():
+                self.switch_scene(4)
             
             pygame.display.update()
             self.clock.tick(self.fps)
@@ -121,14 +125,17 @@ class Game:
     def switch_scene(self, scene_id: int) -> None:
         if scene_id in self.scenes:
             self.current_scene = scene_id
-            self.current_level = self.levels[scene_id]
             
-            self.player.set_position(*self.current_level.player_position)
-            
-            self.camera = Camera(
-                level_width=self.current_level.width * self.current_level.tile_size,
-                level_height=self.current_level.height * self.current_level.tile_size
-            )
+            if scene_id in self.level_ids:
+                self.current_level = self.levels[scene_id]
+                self.player.set_position(*self.current_level.player_position)
+                self.camera = Camera(
+                    level_width=self.current_level.width * self.current_level.tile_size,
+                    level_height=self.current_level.height * self.current_level.tile_size
+                )
+                
+                stop_music()
+                play_music(self.current_level.music_theme)
     
     def pause_game(self) -> None:
         is_paused = True
@@ -143,8 +150,11 @@ class Game:
                     pygame.quit()
     
     def main_menu(self, dt: float = None, event=None) -> None:
+        stop_music()
+        play_music("main theme.mp3")
+        
         self.screen.fill((0, 0, 0))
-        self.screen.blit(load_image("virus.png"), (10, 10))
+        self.screen.blit(load_image("logo.png"), (0, 50))
         
         self.draw_text(text="PRESS START!",
                        font=self.my_font,
@@ -167,36 +177,61 @@ class Game:
             self.current_scene = 1
                 
         pygame.display.update()
-        
-    def level_1(self, dt: float, event=None) -> None:
-        self.run_level(self.current_level, dt)
     
-    def level_2(self, dt: float, event=None) -> None:
-        self.run_level(self.current_level, dt)
-    
-    def level_3(self, dt: float, event=None) -> None:
+    def game_level(self, dt: float, event=None) -> None:
         self.run_level(self.current_level, dt)
     
     def ending(self, dt=None, event=None) -> None:
-        pass
+        if not self.win_played:
+            stop_music()
+            play_sound("win.mp3")
+            self.win_played = True
+        
+        self.win_counter += dt
+        win_img = load_image("you_win.png")
+        
+        if self.win_counter < 3:
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(win_img, (0, WINDOW_HEIGHT // 2 - 50))
+        else:
+            self.screen.fill((0, 0, 0))
+        
+        # if self.win_counter >= 5:
+        #     self.switch_scene(scene_id=0)
+        #     self.win_counter = 0
+        #     self.win_played = False
+        
+        pygame.display.update()
     
     def game_over(self, dt=None, event=None) -> None:
-        self.screen.fill((0, 0, 0))
+        if not self.game_over_played:
+            stop_music()
+            play_sound("game_over.mp3")
+            self.game_over_played = True
+        
+        self.game_over_counter += dt
         game_over_img = load_image("game_over.png")
-        self.screen.blit(game_over_img, (0, WINDOW_HEIGHT // 2 - 50))
-    
+        
+        if self.game_over_counter < 3:
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(game_over_img, (0, WINDOW_HEIGHT // 2 - 50))
+        else:
+            self.screen.fill((0, 0, 0))
+        
+        pygame.display.update()
+
     def run_level(self, level: "Level", dt: float) -> None:
         self.camera.update(self.player)
         level.render(screen=self.screen, camera=self.camera)
-                
+                       
         for enemy in level.enemies_sprites:
             enemy.update(screen=self.screen, camera=self.camera, player=self.player)
 
         for power_booster in level.power_boosters_sprites:
             power_booster.update(screen=self.screen, camera=self.camera, player=self.player)
         
-        self.particles.update()
-        self.particles.draw(self.screen)
+        for power_piece in level.power_pieces_sprites:
+            power_piece.update(screen=self.screen, camera=self.camera, player=self.player)
         
         block_tiles = level.get_block_tiles()
         self.player.update(screen=self.screen, camera=self.camera, dt=dt, block_tiles=block_tiles, enemy_sprites=self.enemy_sprites, level=level)
@@ -206,30 +241,23 @@ class Game:
     def levels_setup(self) -> None:
         self.enemy_sprites = pygame.sprite.Group()
         
-        enemies = {
-            1: [
-                [RockSleeper(position=(50, 180), screen=self.screen)],
-                [RockSleeper(position=(190, 180), screen=self.screen)],
-                [RockSleeper(position=(443, 121), screen=self.screen)],],
-            2: [
-                [FlyingVirus(position=(100, 4), screen=self.screen)],
-                [FlyingVirus(position=(300, 4), screen=self.screen)],
-                [FlyingVirus(position=(400, 4), screen=self.screen)],
-                [FlyingVirus(position=(500, 4), screen=self.screen)],
-                [RockSleeper(position=(443, 180), screen=self.screen)],],
-            3: [
-                [],]
-        }
+        enemies = load_characters_from_db(load_db("characters.sqlite3"), self.screen)
         
         power_boosters = {
             1: [
                 [(728, 160)],
-                [(20, 10)],
-                [(30, 10)],],
+                [(384, 168)],
+                [(944, 50)],],
             2: [
-                [(0, 10)],
-                [(50, 10)],
-                [(60, 10)],]
+                [(834, 108)],
+                [(594, 48)],
+                [(414, 90)],]
+        }
+        
+        power_piece = {
+            3: [
+                [(1138, 156)]
+            ]
         }
         
         self.levels = {
@@ -239,6 +267,7 @@ class Game:
                 player_position=(0, 180),
                 enemies_data=enemies[1],
                 power_boosters_data=power_boosters[1],
+                power_pieces_data=None,
                 music_theme="main theme.mp3",
                 block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
                                 11, 12, 13, 14, 15, 16, 17, 18, 19, 
@@ -256,6 +285,7 @@ class Game:
                 player_position=(0, 0),
                 enemies_data=enemies[2],
                 power_boosters_data=power_boosters[2],
+                power_pieces_data=None,
                 music_theme="theme test.wav",
                 block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
                                 11, 12, 13, 14, 15, 16, 17, 18, 19, 
@@ -272,7 +302,8 @@ class Game:
                 player=self.player,
                 player_position=(0, 0),
                 enemies_data=enemies[3],
-                power_boosters_data=power_boosters[1],
+                power_boosters_data=None,
+                power_pieces_data=power_piece[3],
                 music_theme="theme test.wav",
                 block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
                                 11, 12, 13, 14, 15, 16, 17, 18, 19, 
@@ -282,13 +313,14 @@ class Game:
                                 58, 60, 61, 62, 63, 64, 65, 66, 67, 
                                 68, 69, 70, 71, 72, 73, 74],
                 transition_tiles_id=[35],
-                next_scene_id=1
+                next_scene_id=4
             )
         }
         
         self.current_level = self.levels[1]
     
     def player_info(self) -> None:
+        print(self.player.rect.x, self.player.rect.y)
         current_lvl_name = self.current_level.level_name.split("_")
         level_info = ""
         p_points_info = str(self.player.power_level)

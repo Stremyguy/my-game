@@ -1,5 +1,5 @@
 from characters import Player
-from power_booster import PowerBooster
+from power_booster import PowerBooster, PowerPiece
 from instruments import load_level
 
 import pygame
@@ -12,6 +12,7 @@ class Level:
                  player_position: tuple,
                  enemies_data: list,
                  power_boosters_data: list,
+                 power_pieces_data: list,
                  music_theme: str,
                  block_tiles_id: list,
                  transition_tiles_id: dict,
@@ -22,6 +23,7 @@ class Level:
         self.player_position = player_position
         self.enemies_data = enemies_data
         self.power_boosters_data = power_boosters_data
+        self.power_pieces_data = power_pieces_data
         self.music_theme = music_theme
         self.block_tiles_id = block_tiles_id
         self.transition_tiles_id = transition_tiles_id
@@ -38,16 +40,25 @@ class Level:
         self.player.set_position(self.player_position[0], self.player_position[1])
         
         self.power_boosters_sprites = pygame.sprite.Group()
+        self.power_pieces_sprites = pygame.sprite.Group()
         self.enemies_sprites = pygame.sprite.Group()
+        self.bullets_sprites = pygame.sprite.Group()
         
         for enemy in self.enemies_data:
             enemy_sprite = enemy
             self.enemies_sprites.add(enemy_sprite)
         
-        for power_booster in self.power_boosters_data:
-            pos = power_booster[0]
-            curr_power_booster = PowerBooster(position=pos)
-            self.power_boosters_sprites.add(curr_power_booster)
+        if self.power_boosters_data is not None:
+            for power_booster in self.power_boosters_data:
+                pos = power_booster[0]
+                curr_power_booster = PowerBooster(position=pos)
+                self.power_boosters_sprites.add(curr_power_booster)
+        
+        if self.power_pieces_data is not None:
+            for power_piece in self.power_pieces_data:
+                pos = power_piece[0]
+                curr_power_piece = PowerPiece(position=pos)
+                self.power_pieces_sprites.add(curr_power_piece)
 
     def get_block_tiles(self) -> list:
         block_tiles = []
@@ -103,3 +114,4 @@ class Level:
                     tile_rect = pygame.Rect(x * self.tile_size, y * self.tile_size, self.tile_size, self.tile_size)
                     camera.apply(tile_rect)
                     screen.blit(image, tile_rect.topleft)
+                    
