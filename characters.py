@@ -21,6 +21,7 @@ class Player:
         self.animation_speed = 0.09
         self.frame_timer = 0
         
+        # player parameters
         self.flip_x = False
         self.current_state = "idle"
         self.moving_x = False
@@ -28,14 +29,15 @@ class Player:
         self.killed = False
         self.can_move = True
 
+        # physics
         self.gravity = GRAVITY
         self.jump_force = 300
         self.y_velocity = 0
         
         self.speed = 0
-        
         self.hp = 100
-        self.power_level = 1
+        self.power_level = 10
+        self.player_score = 0
         
         self.ultra_piece_collected = False
     
@@ -52,6 +54,9 @@ class Player:
                 if self.frame_timer >= self.animation_speed:
                     self.current_frame = (self.current_frame + 1) % len(self.sprites_states["run"])
                     self.frame_timer = 0
+    
+    def update_score(self) -> None:
+        self.player_score += 1
     
     def move_player(self, block_tiles: list) -> None:
         if self.can_move:
@@ -129,6 +134,7 @@ class Player:
         self.move_player(block_tiles)
         self.check_collisions(block_tiles, enemy_sprites, dt)
         self.update_animation(dt)
+        self.update_score()
         self.render(screen, camera=camera)
         
         if level.check_scene_transition():

@@ -87,6 +87,8 @@ class Game:
             elif self.player.check_win():
                 self.switch_scene(4)
             
+            self.check_score()
+            
             pygame.display.update()
             self.clock.tick(self.fps)
     
@@ -124,6 +126,7 @@ class Game:
     
     def switch_scene(self, scene_id: int) -> None:
         if scene_id in self.scenes:
+            self.player.player_score = 0
             self.current_scene = scene_id
             
             if scene_id in self.level_ids:
@@ -286,7 +289,7 @@ class Game:
                 enemies_data=enemies[2],
                 power_boosters_data=power_boosters[2],
                 power_pieces_data=None,
-                music_theme="theme test.wav",
+                music_theme="underground_theme.mp3",
                 block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
                                 11, 12, 13, 14, 15, 16, 17, 18, 19, 
                                 20, 21, 22, 23, 24, 25, 26, 27, 28, 
@@ -304,7 +307,7 @@ class Game:
                 enemies_data=enemies[3],
                 power_boosters_data=None,
                 power_pieces_data=power_piece[3],
-                music_theme="theme test.wav",
+                music_theme="epic_boss_fight.mp3",
                 block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
                                 11, 12, 13, 14, 15, 16, 17, 18, 19, 
                                 20, 21, 22, 23, 24, 25, 26, 27, 28, 
@@ -319,19 +322,24 @@ class Game:
         
         self.current_level = self.levels[1]
     
+    def check_score(self) -> bool:
+        if self.player.player_score > self.current_level.max_score:
+            self.player.hp = 0
+    
     def player_info(self) -> None:
-        print(self.player.rect.x, self.player.rect.y)
         current_lvl_name = self.current_level.level_name.split("_")
         level_info = ""
         p_points_info = str(self.player.power_level)
+        score_info = f"Score: {str(self.player.player_score)}"
         
         if "level" in current_lvl_name:
             level_info = f"Lvl: {current_lvl_name[1]}"
         elif "bossfight" in current_lvl_name:
             level_info = f"Bf: {current_lvl_name[1]}"
         
-        self.draw_text(level_info, self.my_font, (255, 255, 255), 240, 10, "right")
-        self.draw_text(p_points_info, self.my_font, (255, 255, 255), 240, 33, "right")
+        self.draw_text(score_info, self.my_font, (255, 255, 255), 240, 10, "right")
+        self.draw_text(level_info, self.my_font, (255, 255, 255), 240, 33, "right")
+        self.draw_text(p_points_info, self.my_font, (255, 255, 255), 240, 56, "right")
 
 
 class Camera:

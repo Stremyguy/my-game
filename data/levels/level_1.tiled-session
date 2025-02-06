@@ -3,10 +3,10 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "maps/bossfight_1.tmx",
+    "activeFile": "maps/level_1.tmx",
     "expandedProjectPaths": [
-        ".",
-        "maps"
+        "maps",
+        "."
     ],
     "fileStates": {
         "main tile set.tsx": {
@@ -18,7 +18,7 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 508.75,
+                "x": 509,
                 "y": 187.75
             }
         },
@@ -34,7 +34,7 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 913.25,
+                "x": 356.5,
                 "y": 115.25
             }
         },
@@ -42,7 +42,7 @@
             "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1157.1666666666665,
+                "x": 1157,
                 "y": 137.83333333333331
             }
         },
@@ -62,15 +62,16 @@
         "tile_set.tsx",
         "maps/level_2.tmx",
         "maps/bossfight_1.tmx",
-        "maps/level_1.tmx"
+        "maps/level_1.tmx",
+        "main tile set.tsx"
     ],
     "project": "level_1.tiled-project",
     "recentFiles": [
         "tile_set.tsx",
         "maps/level_2.tmx",
-        "maps/level_1.tmx",
         "maps/bossfight_1.tmx",
         "main tile set.tsx",
+        "maps/level_1.tmx",
         "maps/level1.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",

@@ -34,6 +34,8 @@ class Level:
         self.width = self.map.width
         self.tile_size = self.map.tilewidth
         
+        self.max_score = 10000
+        
         self.setup()
     
     def setup(self) -> None:
