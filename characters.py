@@ -38,6 +38,7 @@ class Player:
         self.hp = 100
         self.power_level = 10
         self.player_score = 0
+        self.final_score = 0
         
         self.ultra_piece_collected = False
     
@@ -57,6 +58,9 @@ class Player:
     
     def update_score(self) -> None:
         self.player_score += 1
+        
+        if not self.ultra_piece_collected:
+            self.final_score += 1
     
     def move_player(self, block_tiles: list) -> None:
         if self.can_move:

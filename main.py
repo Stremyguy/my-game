@@ -199,10 +199,12 @@ class Game:
         else:
             self.screen.fill((0, 0, 0))
         
-        # if self.win_counter >= 5:
-        #     self.switch_scene(scene_id=0)
-        #     self.win_counter = 0
-        #     self.win_played = False
+        self.draw_text(text=f"Your score: {self.player.final_score}",
+                       font=self.my_font,
+                       text_color=(255, 255, 255),
+                       x=WINDOW_WIDTH / 2,
+                       y=180,
+                       align="center")
         
         pygame.display.update()
     
