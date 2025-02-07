@@ -1,10 +1,10 @@
 import pygame
 
-from characters import Player
-from levels import Level
-from instruments import load_image, load_font, load_db, init_music, play_music, stop_music, play_sound
-from constants import *
-from db_handler import load_characters_from_db
+from data.code.characters import Player
+from data.code.levels import Level
+from data.code.instruments import load_image, load_font, load_db, init_music, play_music, stop_music, play_sound
+from data.code.constants import *
+from data.code.db_handler import load_characters_from_db
 
 
 # The main class for the game
