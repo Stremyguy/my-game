@@ -7,10 +7,11 @@ from constants import *
 from db_handler import load_characters_from_db
 
 
+# The main class for the game
 class Game:
     def __init__(self) -> None:
+        # constants setup
         self.fps = FPS
-        
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.icon = load_image("run2.png")
         self.clock = pygame.time.Clock()
@@ -37,6 +38,8 @@ class Game:
         self.win_played = False
         self.win_counter = 0
         
+        self.enemies = load_characters_from_db(load_db("characters.sqlite3"), self.screen)
+
         # fonts
         pygame.font.init()
         self.my_font = pygame.font.Font(load_font("PressStartFont.ttf"), 13)
@@ -48,6 +51,7 @@ class Game:
         self.levels_setup()
         self.game_loop()
     
+    # game loop
     def game_loop(self) -> None:
         self.running = True
         
@@ -92,6 +96,7 @@ class Game:
             pygame.display.update()
             self.clock.tick(self.fps)
     
+    # player movement
     def player_input(self, event) -> None:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
@@ -113,6 +118,7 @@ class Game:
                 self.player.set_speed(0)
                 self.player.current_state = "idle"
     
+    # a useful method for displaying text
     def draw_text(self, text: str, font: "pygame", text_color: tuple, x: int, y: int, align: str = "center") -> None:
         img = font.render(text, True, text_color)
         if align == "center":
@@ -124,6 +130,7 @@ class Game:
             
         self.screen.blit(img, rect)
     
+    # scene switching
     def switch_scene(self, scene_id: int) -> None:
         if scene_id in self.scenes:
             self.player.player_score = 0
@@ -140,6 +147,7 @@ class Game:
                 stop_music()
                 play_music(self.current_level.music_theme)
     
+    # pausing game
     def pause_game(self) -> None:
         is_paused = True
         
@@ -152,6 +160,7 @@ class Game:
                     self.running = False
                     pygame.quit()
     
+    # main menu scene
     def main_menu(self, dt: float = None, event=None) -> None:
         stop_music()
         play_music("main theme.mp3")
@@ -181,9 +190,11 @@ class Game:
                 
         pygame.display.update()
     
+    # running a level
     def game_level(self, dt: float, event=None) -> None:
         self.run_level(self.current_level, dt)
     
+    # ending scene
     def ending(self, dt=None, event=None) -> None:
         if not self.win_played:
             stop_music()
@@ -208,6 +219,7 @@ class Game:
         
         pygame.display.update()
     
+    # game over scene
     def game_over(self, dt=None, event=None) -> None:
         if not self.game_over_played:
             stop_music()
@@ -228,6 +240,7 @@ class Game:
     def run_level(self, level: "Level", dt: float) -> None:
         self.camera.update(self.player)
         level.render(screen=self.screen, camera=self.camera)
+        enemy_objects = []
                        
         for enemy in level.enemies_sprites:
             enemy.update(screen=self.screen, camera=self.camera, player=self.player)
@@ -239,14 +252,16 @@ class Game:
             power_piece.update(screen=self.screen, camera=self.camera, player=self.player)
         
         block_tiles = level.get_block_tiles()
+        
+        for value in self.enemies.values():
+            enemy_objects.append(value)
+        
         self.player.update(screen=self.screen, camera=self.camera, dt=dt, block_tiles=block_tiles, enemy_sprites=self.enemy_sprites, level=level)
         
         self.player_info()
     
     def levels_setup(self) -> None:
         self.enemy_sprites = pygame.sprite.Group()
-        
-        enemies = load_characters_from_db(load_db("characters.sqlite3"), self.screen)
         
         power_boosters = {
             1: [
@@ -270,7 +285,7 @@ class Game:
                 level_name="level_1",
                 player=self.player,
                 player_position=(0, 180),
-                enemies_data=enemies[1],
+                enemies_data=self.enemies[1],
                 power_boosters_data=power_boosters[1],
                 power_pieces_data=None,
                 music_theme="main theme.mp3",
@@ -288,10 +303,10 @@ class Game:
                 level_name="level_2",
                 player=self.player,
                 player_position=(0, 0),
-                enemies_data=enemies[2],
+                enemies_data=self.enemies[2],
                 power_boosters_data=power_boosters[2],
                 power_pieces_data=None,
-                music_theme="underground_theme.mp3",
+                music_theme="ud_theme.mp3",
                 block_tiles_id=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
                                 11, 12, 13, 14, 15, 16, 17, 18, 19, 
                                 20, 21, 22, 23, 24, 25, 26, 27, 28, 
@@ -306,7 +321,7 @@ class Game:
                 level_name="bossfight_1",
                 player=self.player,
                 player_position=(0, 0),
-                enemies_data=enemies[3],
+                enemies_data=self.enemies[3],
                 power_boosters_data=None,
                 power_pieces_data=power_piece[3],
                 music_theme="epic_boss_fight.mp3",

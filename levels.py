@@ -5,6 +5,7 @@ from instruments import load_level
 import pygame
 
 
+# The class for creating a level object
 class Level:
     def __init__(self,
                  level_name: str,

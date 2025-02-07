@@ -7,6 +7,7 @@ from constants import *
 from particles import ParticleManager
 
 
+# player logic
 class Player:
     def __init__(self) -> None:
         self.rect = pygame.Rect(0, 0, 24, 24)
@@ -90,7 +91,7 @@ class Player:
     
     def check_collisions(self, block_tiles: list, enemy_sprites: "pygame", dt: float) -> None:
         self.rect.y += self.y_velocity * dt
-        
+
         for tile in block_tiles:
             if self.rect.colliderect(tile):
                 if self.y_velocity > 0:
@@ -99,6 +100,16 @@ class Player:
                     self.y_velocity = 0
                 elif self.y_velocity < 0:
                     self.rect.top = tile.bottom
+                    self.y_velocity = 0
+        
+        for enemy in enemy_sprites:
+            if self.rect.colliderect(enemy):
+                if self.y_velocity > 0:
+                    self.rect.bottom = enemy.top
+                    self.on_ground = True
+                    self.y_velocity = 0
+                elif self.y_velocity < 0:
+                    self.rect.top = enemy.bottom
                     self.y_velocity = 0
         
     def get_current_sprite(self) -> str:
@@ -140,13 +151,14 @@ class Player:
         self.update_animation(dt)
         self.update_score()
         self.render(screen, camera=camera)
-        
+
         if level.check_scene_transition():
             return level.next_scene_id
-        
+
         return None
 
 
+# The basic class of an enemy
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, position: tuple, screen: "pygame") -> None:
         super().__init__()
@@ -433,7 +445,8 @@ class Boss(Enemy):
                         speed=speed,
                         sprite_file="boss bullet.png",
                         x_dir=x_dir,
-                        y_dir=y_dir)
+                        y_dir=y_dir,
+                        max_time=1500)
             self.bullets.add(bullet)
     
     # def move(self, player) -> None:
@@ -497,10 +510,11 @@ class Boss(Enemy):
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, 
                  position: tuple, 
-                 speed: float, 
-                 sprite_file: str, 
+                 speed: float,
+                 sprite_file: str,
                  x_dir: bool = True, 
                  y_dir: bool = False,
+                 max_time: int = 500
                  ) -> None:
         super().__init__()
         self.x = position[0]
@@ -514,6 +528,8 @@ class Bullet(pygame.sprite.Sprite):
         self.y_dir = y_dir
         
         self.speed = speed
+        self.max_time = max_time
+        self.spawn_time = pygame.time.get_ticks()
         self.hit = False
         
         self.set_pos(x=self.x, y=self.y)
@@ -523,6 +539,9 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.y += self.speed
         if self.x_dir:
             self.rect.x += self.speed
+        
+        if pygame.time.get_ticks() - self.spawn_time > self.max_time:
+            self.kill()
     
     def set_pos(self, x: int, y: int) -> None:
         self.rect.x = x

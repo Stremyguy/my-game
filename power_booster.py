@@ -2,6 +2,7 @@ import pygame
 from instruments import load_image
 
 
+# Objects
 class ClassicPower(pygame.sprite.Sprite):
     def __init__(self, 
                  position: tuple = (0, 0), 

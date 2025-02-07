@@ -2,8 +2,8 @@ import pygame
 import pytmx
 
 DATA_FOLDER = "data/"
-FONT_FOLDER = "fonts/"
-DATABASE_FOLDER = "db/"
+FONT_FOLDER = "data/fonts/"
+DATABASE_FOLDER = "data/db/"
 MUSIC_FOLDER = "data/music/"
 SOUNDS_FOLDER = "data/sfx/"
 LEVELS_FOLDER = "data/levels/maps/"
