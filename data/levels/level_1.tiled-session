@@ -3,23 +3,56 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "maps/level_1.tmx",
+    "activeFile": "tile_set.tsx",
     "expandedProjectPaths": [
-        "maps",
-        "."
+        ".",
+        "maps"
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "C:/Users/PC/Desktop/PythonProjects/Jayver/data/main tile set.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "C:/Users/PC/Desktop/PythonProjects/Jayver/data/tile_set.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "bossfight_1.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 830,
+                "y": 75.5
+            }
+        },
+        "level_1.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 394.66666666666663,
+                "y": 144.33333333333331
+            }
+        },
+        "level_2.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 600,
+                "y": 119.5
+            }
+        },
         "main tile set.tsx": {
             "dynamicWrapping": false,
             "scaleInDock": 2,
-            "scaleInEditor": 1
+            "scaleInEditor": 11
         },
         "maps/bossfight_1.tmx": {
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 509,
-                "y": 187.75
+                "x": 600.25,
+                "y": 120
             }
         },
         "maps/level1.tmx": {
@@ -34,17 +67,21 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 356.5,
-                "y": 115.25
+                "x": 170.75,
+                "y": 118.25
             }
         },
         "maps/level_2.tmx": {
             "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1157,
-                "y": 137.83333333333331
+                "x": 728.8333333333333,
+                "y": 140.33333333333331
             }
+        },
+        "maps/tile_set.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "tile_set.tsx": {
             "dynamicWrapping": true,
@@ -52,26 +89,30 @@
             "scaleInEditor": 3
         }
     },
+    "last.exportedFilePath": "C:/Users/PC/Desktop/PythonProjects/Jayver/data/levels/maps",
     "last.imagePath": "C:/Users/PC/Desktop/PythonProjects/my-game/data",
+    "lastUsedTilesetExportFilter": "JSON tileset files (*.tsj *.json)",
     "map.height": 20,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 12,
     "map.tileWidth": 12,
     "map.width": 100,
     "openFiles": [
         "tile_set.tsx",
-        "maps/level_2.tmx",
-        "maps/bossfight_1.tmx",
-        "maps/level_1.tmx",
-        "main tile set.tsx"
+        "maps/level_1.tmx"
     ],
     "project": "level_1.tiled-project",
     "recentFiles": [
+        "maps/level_1.tmx",
         "tile_set.tsx",
+        "bossfight_1.tmx",
+        "level_2.tmx",
+        "level_1.tmx",
+        "main tile set.tsx",
         "maps/level_2.tmx",
         "maps/bossfight_1.tmx",
-        "main tile set.tsx",
-        "maps/level_1.tmx",
+        "maps/tile_set.tsx",
         "maps/level1.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",

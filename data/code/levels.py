@@ -1,8 +1,8 @@
+import os
+import pygame
 from data.code.characters import Player
 from data.code.power_booster import PowerBooster, PowerPiece
 from data.code.instruments import load_level
-
-import pygame
 
 
 # The class for creating a level object
@@ -40,7 +40,7 @@ class Level:
         self.setup()
     
     def setup(self) -> None:
-        self.player.set_position(self.player_position[0], self.player_position[1])
+        self.player.set_position(*self.player_position)
         
         self.power_boosters_sprites = pygame.sprite.Group()
         self.power_pieces_sprites = pygame.sprite.Group()
@@ -117,4 +117,3 @@ class Level:
                     tile_rect = pygame.Rect(x * self.tile_size, y * self.tile_size, self.tile_size, self.tile_size)
                     camera.apply(tile_rect)
                     screen.blit(image, tile_rect.topleft)
-                    
